@@ -74,6 +74,8 @@ AS `Full Name`
 FROM employees
 WHERE salary IN(25000, 14000, 12500,23600);
 
+-- 12 
+
 
 										-- 10. Find All Employees Without Manager
     
@@ -85,3 +87,129 @@ WHERE manager_id IS NULL;
 SELECT first_name, last_name, salary FROM employees
 WHERE salary > 50000
 ORDER BY salary DESC;
+
+
+							-- 12. Find 5 Best Paid Employees
+			
+-- С LIMIT  избираме само колко данни да виждаме. В случая понеже селектираме по DESC ще даде първите 5						
+SELECT first_name, last_name FROM employees
+ORDER BY salary DESC
+LIMIT 5;
+
+
+							-- 13. Find All Employees Except Marketing
+
+SELECT first_name, last_name FROM employees
+WHERE department_id != 4;
+
+										-- 14. Sort Employees Table 
+                            
+	-- Можем за всяка града да си дадем определена сортировка
+	SELECT * FROM employees
+    ORDER BY salary DESC, first_name,last_name DESC, middle_name;
+    
+    
+										-- 15. Create View Employees with Salaries
+    -- СЪЗДАВАНЕ НА VIEW. Това си е отделна визуацизацияalter
+    -- Задължително първо си създаваме VIEW.ДАваме му име и добавяме AS  за да покажем какво искаме да има в това VIEW
+    
+CREATE VIEW v_employees_salaries AS
+SELECT first_name, last_name, salary FROM employees;
+
+SELECT * FROM v_employees_salaries;
+    
+    
+									-- 16. Create View Employees with Job Titles
+                                    
+      -- CONCAT_WS --- WS - white space. Просто в началото казваме при конкатенация с какво да раделя? Така обаче ако има някъде НУЛЛ ще добавя " "                               
+                                    
+	CREATE VIEW v_employees_job_titles AS
+    SELECT CONCAT(first_name, ' ', IF(middle_name IS NOT NULL, CONCAT(middle_name, ' '),''), last_name) AS full_name, job_title
+    FROM employees;
+    
+    -- Изтриване на VIEW
+    DROP ViEW v_employees_job_titles;
+    
+    
+    SELECT * FROM v_employees_job_titles;
+
+
+
+
+											--  17. Distinct Job Titles
+                                            
+	-- Distinct - взима ни уникални стойности не ни показва уникати
+    
+    SELECT DISTINCT job_title FROM employees
+    ORDER BY job_title;
+    
+								-- 18. Find First 10 Started Projects
+                                
+	SELECT * FROM projects
+    ORDER BY start_date, name
+    LIMIT 10;
+			
+            
+								-- 19. Last 7 Hired Employees
+            
+	SELECT first_name,last_name, hire_date FROM employees
+    ORDER BY hire_date DESC
+    LIMIT 7;
+    
+
+								-- 20. Increase Salaries
+                 
+ SELECT department_id FROM departments
+ WHERE name IN ('Engineering', 'Tool Design', 'Marketing', 'Information Services');
+ 
+ UPDATE employees
+ SET salary = salary * 1.12
+ WHERE department_id IN(1,2,4,11);
+ 
+ SELECT salary FROM employees;
+
+
+
+ UPDATE employees
+SET salary = salary * 1.12
+WHERE department_id IN (
+SELECT department_id FROM departments
+WHERE `name` IN ('Engineering',
+'Tool Design',
+'Marketing',
+'Information Services')
+);
+SELECT salary FROM employees;
+
+
+								-- 21. All Mountain Peaks
+
+use geography;
+
+SELECT peak_name FROM peaks 
+ORDER BY peak_name;
+
+
+						-- 22. Biggest Countries by Population
+                        
+SELECT country_name, population FROM countries
+WHERE continent_code = 'EU'
+ORDER BY population DESC, country_name
+LIMIT 30;
+
+
+						--  23. Countries and Currency (Euro / Not Euro)
+-- При IF първо слагаме проверкката и какво да пише ако е правилно, а след това какво да напише ако не е  
+                        
+	SELECT country_name, country_code, IF(currency_code = "EUR", "Euro", "Not Euro") 
+    AS currency
+    FROM countries
+    ORDER BY country_name;
+    
+    
+					--  24. All Diablo Characters
+                    
+	use diablo;
+    
+    SELECT name FROM characters 
+    ORDER BY name;
