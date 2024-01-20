@@ -332,3 +332,118 @@ VALUES
 	(1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 	(2, 2, 2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 	(3, 3, 3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+    
+    
+    
+							-- 13. Basic Insert
+	DROP DATABASE soft_uni;
+    
+    CREATE DATABASE soft_uni;
+    
+    use soft_uni;
+    
+    CREATE TABLE towns(
+    id INT PRIMARY KEY AUTO_INCREMENT NOT NULL,
+    name VARCHAR (80) 
+    );
+    CREATE TABLE addresses (
+    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    address_text VARCHAR(80) NOT NULL,
+    town_id INT,
+    FOREIGN KEY (town_id) REFERENCES towns(id)
+    );
+    
+    CREATE TABLE departments (
+    id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    name VARCHAR(80)
+    );
+    
+    CREATE TABLE employees (
+    id INT AUTO_INCREMENT PRIMARY KEY NOT NULL,
+    first_name VARCHAR(50),
+    middle_name VARCHAR(50),
+    last_name VARCHAR(50),
+    job_title VARCHAR(50),
+    department_id INT,
+    hire_date DATE,
+    salary DECIMAL(6.2),
+    address_id INT, 
+    FOREIGN KEY(department_id) REFERENCES departments(id),
+    FOREIGN KEY(address_id) REFERENCES addresses(id)
+    );
+    
+    INSERT INTO towns(name) VALUES
+    ('Sofia'),
+    ('Plovdiv'),
+    ('Varna'),
+    ('Burgas');
+    
+    INSERT INTO departments(name) VALUES
+    ("Engineering"),
+	("Sales"),
+	("Marketing"),
+	("Software Development"),
+	("Quality Assurance");
+    
+    INSERT INTO employees(first_name, middle_name, last_name, job_title, department_id, hire_date, salary, address_id)
+VALUES
+	("Ivan", "Ivanov", "Ivanov", ".NET Developer", 4, "2013-02-01", 3500, NULL),
+	("Petar", "Petrov", "Petrov", "Senior Engineer", 1, "2004-03-02", 4000, NULL),
+	("Maria", "Petrova", "Ivanova", "Intern", 5, "2016-08-28", 525.25, NULL),
+	("Georgi", "Terziev", "Ivanov", "CEO", 2, "2007-12-09", 3000, NULL),
+	("Peter", "Pan", "Pan", "Intern", 3, "2016-08-28", 599.88, NULL);
+    
+    
+											--  14. Basic Select All Fields
+                                            
+	SELECT * FROM towns;
+    SELECT * FROM departments;
+    SELECT * FROM employees;
+    
+    
+											-- 15. Basic Select All Fields and Order Them
+    
+			-- use DESC for  descending  от високо към малко
+	SELECT * FROM towns
+    ORDER BY name;
+    SELECT * FROM departments
+     ORDER BY name;
+    SELECT * FROM employees
+	ORDER BY salary DESC;
+    
+    
+											-- 16. Basic Select Some Fields
+                                            
+	SELECT name FROM towns ORDER BY name;
+    SELECT name FROM departments ORDER BY name;
+    SELECT first_name,last_name,job_title,salary FROM employees ORDER BY salary DESC;
+    
+    
+    
+										-- 17. Increase Employees Salary
+			-- ПЪрво казваме в коя таблица искаме UPDATE
+            -- СЛед това със SET избираме коя колона искаме да променим
+           
+    -- Първи вариант 
+    
+	UPDATE employees
+    SET salary = salary * 1.1;
+    SELECT salary FROM employees;
+    
+    -- Може да се появи грешка:  Error Code: 1175. You are using safe update mode and you tried to update a table without a WHERE that uses a KEY column.  To disable safe mode, toggle the option in Preferences -> SQL Editor and reconnect.
+    -- Тази грешка се поправя с този код: 
+    SET SQL_SAFE_UPDATES = 0;
+    
+    
+    -- Втори вариант за решение  без използването на горния код
+UPDATE employees
+SET salary = salary * 1.1
+WHERE id > 0;
+    
+    
+    
+    
+
+    
+    
+    
