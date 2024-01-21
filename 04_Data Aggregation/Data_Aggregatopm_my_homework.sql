@@ -127,6 +127,54 @@ GROUP BY department_id
 ORDER BY department_id ASC;
 
 
+-- 13. Employees Average Salaries
+SELECT 
+    `department_id`,
+    CASE
+        WHEN `department_id` = 1 THEN AVG(`salary`) + 5000
+        ELSE AVG(`salary`)
+    END AS 'avg_salary'
+FROM
+    `employees`
+WHERE
+    `salary` > 30000 AND `manager_id` != 42
+GROUP BY `department_id`
+ORDER BY `department_id`;
+
+
+							-- 14. Employees Maximum Salaries
+
+ -- Тук трябва да изпозлваме Having защото искаме да направим групиране и след това да направим конкретното филтриране
+SELECT department_id,
+MAX(salary) AS 'max_salary'
+FROM employees
+GROUP BY department_id
+HAVING NOT `max_salary` BETWEEN 30000 AND 70000
+ORDER BY department_id ASC;
+
+
+-- 15. Employees Count Salaries
+
+SELECT
+COUNT(salary)
+FROM employees
+WHERE
+ISNULL (manager_id);
+
+
+-- 16. 3rd Highest Salary
+
+
+--  17. Salary Challenge
+
+-- 18. Departments Total Salaries
+
+SELECT 
+    `department_id`, SUM(salary) AS 'total_salary'
+FROM
+    employees
+GROUP BY department_id
+ORDER BY department_id ASC;
 
 		
 
