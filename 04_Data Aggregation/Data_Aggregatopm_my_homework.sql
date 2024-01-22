@@ -9,6 +9,10 @@ use gringotts;
 -- При * избираме всички, можем да сложим и нещо специфично (first_name)
 SELECT COUNT(*) FROM wizzard_deposits;
 
+-- лекторско решение
+
+SELECT COUNT(*) AS 'count' FROM wizzard_deposits; 
+
 
 					-- 02. Longest Magic Wand
           
@@ -33,7 +37,12 @@ FROM wizzard_deposits
 GROUP BY deposit_group
 LIMIT 1;
 
-
+-- с ордер
+SELECT deposit_group
+FROM wizzard_deposits
+GROUP BY deposit_group
+ORDER BY AVG(magic_wand_size)
+LIMIT 1;
 					-- 05. Deposits Sum
 
 -- Със финкцията СУМ избираме да сумираме.
@@ -78,7 +87,7 @@ ORDER BY magic_wand_creator ASC, deposit_group ASC;
 
 					-- 09. Age Groups
                     
-		
+		-- При CASE  винаги завършваме с END!!! да не се забравя
                     
 SELECT
   CASE
@@ -100,7 +109,7 @@ ORDER BY MIN(age) ASC;
 
 SELECT LEFT(first_name, 1) as first_letter
 FROM wizzard_deposits
-WHERE deposit_group = 'Troll CHest'
+WHERE deposit_group = 'Troll Chest'
 GROUP BY first_letter
 ORDER BY first_letter ASC;
 
@@ -128,6 +137,27 @@ ORDER BY department_id ASC;
 
 
 -- 13. Employees Average Salaries
+
+-- 1 вариант
+
+
+CREATE TABLE highest_paid_employees 
+SELECT * FROM employees -- по този начин създаваме нова таблица и взимаме текущите данни от вече съществуваща
+WHERE salary > 30000;
+
+DELETE FROM highest_paid_employees   -- изтриваме на данни от дадена таблица
+WHERE manager_id = 42;
+
+UPDATE highest_paid_employees   -- увеличаване на заплатите 
+SET salary = salary + 5000
+WHERE department_id = 1;
+
+SELECT department_id, AVG(salary) AS 'avr_salary' FROM highest_paid_employees 
+GROUP BY department_id
+ORDER BY department_id;
+
+
+-- втори вариант само с една заявка като селект
 SELECT 
     `department_id`,
     CASE
@@ -140,6 +170,9 @@ WHERE
     `salary` > 30000 AND `manager_id` != 42
 GROUP BY `department_id`
 ORDER BY `department_id`;
+
+
+
 
 
 							-- 14. Employees Maximum Salaries
@@ -163,14 +196,43 @@ ISNULL (manager_id);
 
 
 -- 16. 3rd Highest Salary
+		
+		-- Вложени заявки 
+        use soft_uni;
+        
+SELECT department_id, (SELECT DISTINCT salary FROM employees -- с distinct вчимаме само уникалните стойности
+						WHERE e.department_id = department_id -- тук показваме че за селектнатият департамент от външанта заявха искаме да се мачва с  вътрешния
+						ORDER BY salary DESC
+						LIMIT 1 OFFSET 2) AS third_higest_salary  -- offset казва искам да пропуснеш първите два реда и да вземеш само третия --- LImit по принцип си работят с OFFSET 0)
+FROM employees e
+GROUP BY department_id
+HAVING third_higest_salary  IS NOT NULL
+ORDER BY department_id;
+
+
+
 
 
 --  17. Salary Challenge
 
+
+SELECT first_name,last_name,department_id 
+FROM employees e
+WHERE salary > (
+	SELECT avg(salary)
+    FROM employees
+    WHERE department_id = e.department_id -- кръщаваме го с Е за да можем да го подадем на външната заявка
+) -- Със () се отваря вложена заявка
+ORDER BY department_id, employee_id
+LIMIT 10;
+
+
+
+
 -- 18. Departments Total Salaries
 
 SELECT 
-    `department_id`, SUM(salary) AS 'total_salary'
+    department_id, SUM(salary) AS 'total_salary'
 FROM
     employees
 GROUP BY department_id
