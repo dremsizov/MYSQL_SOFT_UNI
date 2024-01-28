@@ -202,4 +202,95 @@ LIMIT 1;
 
 
 
+use geography;
+-- 12. Highest Peaks in Bulgaria
 
+SELECT * FROm mountains;
+
+SELECT 
+c.country_code,
+m.mountain_range,
+p.peak_name,
+p.elevation
+
+FROM countries c
+JOIN mountains_countries as mc ON mc.country_code = c.country_code
+JOIN mountains as m ON m.id = mc.mountain_id
+JOIN peaks as p ON p.mountain_id = m.id
+WHERE p.elevation > 2835 AND (c.country_code = "BG")
+ORDER BY p.elevation DESC;
+
+
+-- 13. Count Mountain Ranges
+
+SELECT * FROM rivers;
+
+SELECT 
+c.country_code, COUNT(mc.mountain_id) AS 'mountain_range'
+
+FROM countries c
+JOIN mountains_countries as mc ON mc.country_code = c.country_code
+WHERE
+    c.country_name IN ('United States' , 'Russia', 'Bulgaria')
+    GROUP BY c.country_code
+ORDER BY `mountain_range` DESC;
+
+
+
+-- 14. Countries with Rivers.  !!!!!!!!!
+
+SELECT  
+c.country_name,
+r.river_name
+
+FROM countries c
+LEFT JOIN countries_rivers as cr ON cr.country_code = c.country_code  -- Тук трябва да се изпозлва LEFT за да имаме визуализация на NULL
+LEFT JOIN rivers as r ON r.id = cr.river_id
+JOIN continents as cn ON cn.continent_code = c.continent_code
+WHERE     cn.continent_name = 'Africa'
+ORDER BY c.country_name ASC
+LIMIT 5;
+
+--  15. *Continents and Currencies (not included in final score)
+
+
+
+
+
+
+-- 16. Countries without any Mountains
+
+SELECT 
+    COUNT(*) as 'country_count'
+FROM
+    (SELECT 
+        mc.country_code AS 'mc_country_code'
+    FROM
+        `mountains_countries` AS mc
+    GROUP BY mc.country_code) AS d
+        RIGHT JOIN
+    `countries` AS c ON c.country_code = d.mc_country_code
+WHERE
+    d.mc_country_code IS NULL;
+    
+
+
+-- 17. Highest Peak and Longest River by Country
+
+SELECT 
+    c.country_name,
+    MAX(p.elevation) AS 'highest_peak_elevation',
+    MAX(r.length) AS 'longest_river_length'
+FROM
+    countries  c
+LEFT JOIN
+`mountains_countries` as mc ON c.country_code = mc.country_code
+LEFT JOIN
+`peaks` as p ON mc.mountain_id = p.mountain_id
+LEFT JOIN
+`countries_rivers` as cr ON c.country_code = cr.country_code
+LEFT JOIN
+    `rivers` as r ON cr.river_id = r.id
+GROUP BY c.country_name
+ORDER BY `highest_peak_elevation` DESC , `longest_river_length` DESC , c.country_name
+LIMIT 5;
