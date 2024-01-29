@@ -2,7 +2,7 @@
 
 -- 1. Employee Address
 
-SELECT e.employee_id,
+SELECT e.employee_id, 
 e.job_title,
 a.address_id,
 a.address_text
@@ -145,7 +145,7 @@ SELECT
 e.employee_id,
 e.first_name,
 IF(YEAR (p.start_date) >= 2005, NULL,
-p.name) as 'project_name'
+p.name) AS 'project_name'
 FROM employees e
 
 JOIN employees_projects ep ON ep.employee_id = e.employee_id
@@ -261,7 +261,7 @@ LIMIT 5;
 -- 16. Countries without any Mountains
 
 SELECT 
-    COUNT(*) as 'country_count'
+    COUNT(*) AS 'country_count'
 FROM
     (SELECT 
         mc.country_code AS 'mc_country_code'
